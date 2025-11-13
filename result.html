@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Result</title>
+  <link rel="stylesheet" href="SoftwareEng.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title"> Your Ideal Career Path </h1>
+    <div class="result-box">
+      <h2 id="careerName">Loading...</h2>
+      <p id="careerDesc"></p>
+
+      <button id="nextBtn" class="roadmap">View Roadmap 🚀</button>
+
+
+    </div>
+  </div>
+
+  <script>
+    // هنا نحاكي النتيجة مؤقتاً (لاحقاً تجي من الذكاء الاصطناعي)
+    const userResult = "WebDev"; 
+    const careers = {
+      "AI": {
+        name: "Artificial Intelligence",
+        desc: "You're logical and love automation! 🤖",
+        link: "AI.html"
+      },
+      "WebDev": {
+        name: "Web Development",
+        desc: "You enjoy creating interactive websites 💻",
+        link: "App_WebDev.html"
+      },
+      "Cyber": {
+        name: "Cyber Security",
+        desc: "You’re sharp and like protecting systems 🔐",
+        link: "Cyber.html"
+      },
+      "Data": {
+        name: "Data Science",
+        desc: "You love finding patterns and insights 📊",
+        link: "Data_Science_Analytics.html"
+      },
+      "GameDev": {
+        name: "Game Development",
+        desc: "You’re creative and love building experiences 🎮",
+        link: "GameDev.html"
+      },
+      "Cloud": {
+        name: "Cloud Computing & DevOps",
+        desc: "You like automation and scalability ☁️",
+        link: "CloudComputing_DevOps.html"
+      }
+    };
+
+    const chosen = careers[userResult];
+    if (chosen) {
+      document.getElementById("careerName").textContent = chosen.name;
+      document.getElementById("careerDesc").textContent = chosen.desc;
+      document.getElementById("nextBtn").onclick = () => {
+        window.location.href = chosen.link;
+      };
+    } else {
+      document.getElementById("careerName").textContent = "No Result Found";
+      document.getElementById("careerDesc").textContent = "Please complete the quiz.";
+    }
+  </script>
+</body>
+</html>
