@@ -3,9 +3,221 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="SoftwareEng.css">
- <h4 class="title8" id="word" aria-live="polite8">
-    <span class="ch3">Artifical Intelligence</span>
-    <span class="ch3"> | Machine Learning</span>
-    <span class="spark3" data-spark="center"></span>
-  </h4>
+<title>AI / Machine Learning Roadmap</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #1f2226;
+  --fg: #e8e8ea;
+  --muted: #9aa0a691;
+  --accent: #ffffffe4;
+  --font: "Momo Trust Display", sans-serif;
+}
+
+/* Reset & base style */
+* {
+  box-sizing: border-box;
+  font-family: var(--font);
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  background-image: url("mesh-gradient (7).png");
+  background-size: cover;
+  color: var(--fg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title */
+h1 {
+  text-align: center;
+  margin-top: 60px;
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: var(--accent);
+  letter-spacing: 0.07em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  transition: 0.3s;
+}
+
+h1:hover {
+  transform: scale(1.02);
+  text-shadow: 0 0 20px var(--accent);
+}
+
+/* Timeline Layout */
+.timeline {
+  position: relative;
+  max-width: 1000px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+/* Vertical line */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  background: linear-gradient(180deg, #ffffffcc, #b5b5b5);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+  border-radius: 3px;
+  opacity: 0.6;
+}
+
+.container {
+  padding: 20px 40px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  width: 45%;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  transition: 0.3s ease;
+}
+
+.container:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Left and right positions */
+.left {
+  left: 0;
+}
+
+.right {
+  left: 55%;
+}
+
+/* Circles */
+.container::before {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: -13px;
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  top: 20px;
+  border-radius: 50%;
+  z-index: 1;
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.right::before {
+  left: -13px;
+}
+
+/* Step text */
+h3 {
+  color: var(--accent);
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+p {
+  line-height: 1.7;
+  color: var(--fg);
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+a {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  background: rgba(255,255,255,0.2);
+  color: var(--accent);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: 0.3s;
+}
+
+a:hover {
+  background: var(--accent);
+  color: var(--bg);
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .timeline::after {
+    left: 30px;
+  }
+
+  .container {
+    width: 100%;
+    left: 0 !important;
+    margin-left: 60px;
+  }
+
+  .container::before {
+    left: -35px;
+  }
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  margin: 60px 0 20px;
+  font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+  <h1>AI / Machine Learning Roadmap</h1>
+
+  <div class="timeline">
+    <div class="container left">
+      <h3>1. Python & Math Foundations</h3>
+      <p>Learn Python, linear algebra, calculus, and probability basics.</p>
+      <a href="https://www.coursera.org/specializations/python" target="_blank">Start Now</a>
+    </div>
+
+    <div class="container right">
+      <h3>2. Data Analysis & Visualization</h3>
+      <p>Learn to manipulate, visualize, and understand data with Pandas, NumPy, and Matplotlib.</p>
+      <a href="https://www.freecodecamp.org/learn/data-analysis-with-python/" target="_blank">Start Now</a>
+    </div>
+
+    <div class="container left">
+      <h3>3. Machine Learning Fundamentals</h3>
+      <p>Understand supervised and unsupervised learning algorithms, regression, and classification.</p>
+      <a href="https://www.coursera.org/learn/machine-learning" target="_blank">Start Now</a>
+    </div>
+
+    <div class="container right">
+      <h3>4. Deep Learning & Neural Networks</h3>
+      <p>Learn neural networks, CNNs, RNNs, and modern deep learning techniques.</p>
+      <a href="https://www.deeplearning.ai/programs/deep-learning-specialization/" target="_blank">Start Now</a>
+    </div>
+
+    <div class="container left">
+      <h3>5. AI in Practice & Projects</h3>
+      <p>Work on AI projects, Kaggle competitions, and real-world applications.</p>
+      <a href="https://www.kaggle.com/learn/overview" target="_blank">Start Now</a>
+    </div>
+
+    <div class="container right">
+      <h3>6. Advanced AI & Specializations</h3>
+      <p>Explore NLP, computer vision, reinforcement learning, and AI ethics.</p>
+      <a href="https://www.coursera.org/learn/ai-for-everyone" target="_blank">Start Now</a>
+    </div>
+  </div>
+
+  <footer>© 2025 Your AI / Machine Learning Journey</footer>
+</body>
+</html>
