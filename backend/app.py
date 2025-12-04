@@ -1,41 +1,57 @@
-# app.py
+from flask import Flask, render_template, request, redirect, session
+from database import get_connection
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
-from flask_cors import CORS
-from flask_marshmallow import Marshmallow 
-
-# 1. Initialize Flask App
 app = Flask(__name__)
+app.secret_key = "secret123"
 
-DB_USER = 'root' 
-DB_PASSWORD = '12345678'
-DB_HOST = 'localhost'
-DB_NAME = 'teachpath' 
+@app.route("/")
+def home():
+    return render_template("login.html")
 
-app.config['SECRET_KEY'] = 'your_super_secret_key_change_me_to_a_long_random_string' 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key_change_me_as_well'
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
 
-# 3. Initialize Extensions
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
-CORS(app) 
+        conn = get_connection()
+        cursor = conn.cursor()
 
-ma = Marshmallow(app)
+        cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+                       (username, email, password))
+        conn.commit()
 
-import routes
+        return redirect("/login")
 
-# Place the models import here, inside the main execution block
-if __name__ == '__main__':
-    from models import * # <-- CRITICAL: Import models here to register them with SQLAlchemy
-    
-    with app.app_context():
-        # Optional: Uncomment this line to create tables if they don't exist
-        # db.create_all() 
-        pass
-    app.run(debug=True, port=5000)
+    return render_template("signup.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s",
+                       (email, password))
+        user = cursor.fetchone()
+
+        if user:
+            session["user_id"] = user[0]
+            return redirect("/roadmap")
+        else:
+            return "Wrong email or password"
+
+    return render_template("login.html")
+
+@app.route("/roadmap")
+def roadmap():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("roadmap.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
