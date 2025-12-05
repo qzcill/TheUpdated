@@ -1,57 +1,73 @@
-from flask import Flask, render_template, request, redirect, session
-from database import get_connection
+from flask import Flask, request, jsonify
+import mysql.connector
 
 app = Flask(__name__)
-app.secret_key = "secret123"
 
-@app.route("/")
-def home():
-    return render_template("login.html")
+# ------------------------
+# DATABASE CONNECTION
+# ------------------------
+def get_db():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",          
+        password="12345678",          
+        database="techpath"   
+    )
 
-@app.route("/signup", methods=["GET", "POST"])
+# ------------------------
+# SIGNUP ROUTE
+# ------------------------
+@app.route("/signup", methods=["POST"])
 def signup():
-    if request.method == "POST":
-        username = request.form["username"]
-        email = request.form["email"]
-        password = request.form["password"]
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
 
-        conn = get_connection()
+    try:
+        conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-                       (username, email, password))
+        cursor.execute(
+            "INSERT INTO users (username, password) VALUES (%s, %s)",
+            (username, password)
+        )
         conn.commit()
+        cursor.close()
+        conn.close()
 
-        return redirect("/login")
+        return jsonify({"message": "Signup successful!"}), 201
 
-    return render_template("signup.html")
+    except mysql.connector.IntegrityError:
+        return jsonify({"error": "Username already exists!"}), 400
 
-@app.route("/login", methods=["GET", "POST"])
+# ------------------------
+# LOGIN ROUTE
+# ------------------------
+@app.route("/login", methods=["POST"])
 def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
 
-        conn = get_connection()
-        cursor = conn.cursor()
+    conn = get_db()
+    cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM users WHERE email=%s AND password=%s",
-                       (email, password))
-        user = cursor.fetchone()
+    cursor.execute(
+        "SELECT * FROM users WHERE username=%s AND password=%s",
+        (username, password)
+    )
+    user = cursor.fetchone()
 
-        if user:
-            session["user_id"] = user[0]
-            return redirect("/roadmap")
-        else:
-            return "Wrong email or password"
+    cursor.close()
+    conn.close()
 
-    return render_template("login.html")
+    if user:
+        return jsonify({"message": "Login successful!"}), 200
+    else:
+        return jsonify({"error": "Invalid username or password!"}), 401
 
-@app.route("/roadmap")
-def roadmap():
-    if "user_id" not in session:
-        return redirect("/login")
-    return render_template("roadmap.html")
-
+# ------------------------
+# RUN SERVER
+# ------------------------
 if __name__ == "__main__":
     app.run(debug=True)
