@@ -1,30 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="log_sign.css">
+    <meta charset="UTF-8">
+    <title>Login to Your Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="log_sign.css">
 </head>
 
 <body>
-  <div class="contain-logsign">
-    <div id="log_sign">
-      <h2 id="logsign">Log in</h2>
+    <div class="contain-logsign">
+        <div id="log_sign">
+            <h2 id="logsign">Login</h2>
 
-      <form>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Password" required>
-        <button type="submit">Sign in</button>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                
+                <input type="text" id="login-username-email" name="username_or_email" placeholder="Username or Email" required>
+                
+                <input type="password" id="login-password" name="password" placeholder="Password" required>
 
-
-      </form>
-      <br><br>
-      <div class="signup">
-      <span>Don't have an account?</span>
-       <a href="signup.html" style="color: white;">sign up</a></div>
+                <button type="submit">Log in</button>
+                
+                <p style="text-align: center; margin-top: 15px; color: #ffffff;">
+                    Don't have an account? <a href="signup.html" style="color: #ffffff; text-decoration: none;">Sign up </a>
+                </p>
+                
+                <div id="message-area" style="text-align: center; margin-top: 15px; font-weight: bold; color: white;"></div>
+            </form>
+        
+        </div>
     </div>
-  </div>
+
+    <script>
+        const LOGIN_URL = 'http://127.0.0.1:5000/api/auth/login';
+
+        function showMessage(text, isError = false) {
+            const messageArea = document.getElementById('message-area');
+            if (messageArea) {
+                messageArea.textContent = text;
+                messageArea.style.color = isError ? '#ff7f7f' : '#7fff7f'; 
+            } else {
+                console.log(`Message: ${text} (Error: ${isError})`);
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault(); 
+            
+            const usernameOrEmail = document.getElementById('login-username-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!usernameOrEmail || !password) {
+                showMessage("please enter your email and password", true);
+                return;
+            }
+            
+            showMessage(" login...", false);
+
+            const data = {
+                username_or_email: usernameOrEmail,
+                password: password
+            };
+
+            try {
+                const response = await fetch(LOGIN_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(` quiz questions...`, false);
+                    
+                    localStorage.setItem('user_id', result.user_id);
+                    localStorage.setItem('username', result.username);
+
+                    setTimeout(() => {
+                      window.location.href = 'Questions.html';
+                    }, 1500); 
+                } else {
+                    showMessage(`faild to login`, true);
+                }
+            } catch (error) {
+                console.error('API Connection Error...', error);
+                showMessage('error in flask! make sure to work on 5000 !!', true);
+            }
+        }
+    </script>
 </body>
 </html>
-
-

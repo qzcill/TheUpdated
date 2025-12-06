@@ -1,31 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="log_sign.css">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="log_sign.css">
+    <title>New Account - Signup</title>
 </head>
 
 <body>
-  <div class="contain-logsign">
-    <div id="log_sign">
-      <h2 id="logsign">New Account</h2>
+    <div class="contain-logsign">
+        <div id="log_sign">
+            <h2 id="logsign">New Account</h2>
 
-      <form>
-        <input type="FName" placeholder="First Name" required>
-        <input type="LName" placeholder="Last Name" required>
-        <input type="UName" placeholder="Username" >
-        <input type="Email" placeholder="Email"required >
-        <input type="passwordimport" placeholder="Password" required>
-        <input type="Cpassword" placeholder="Confirm Password" required>
+            <form id="signup-form" onsubmit="handleSignup(event)">
+                
+                <input type="text" id="signup-first-name" name="first_name" placeholder="First Name" required>
+                <input type="text" id="signup-last-name" name="last_name" placeholder="Last Name" required>
+                <input type="text" id="signup-username" name="username" placeholder="Username" required>
+                <input type="email" id="signup-email" name="email" placeholder="Email" required>
+                <input type="password" id="signup-password" name="password" placeholder="Password" required>
+                <input type="password" id="signup-confirm-password" name="confirm_password" placeholder="Confirm Password" required>
 
-        <button type="submit">Sign up</button>
-
-
-      </form>
-    
+                <button type="submit">Sign up</button>
+                
+                <div id="message-area" style="text-align: center; margin-top: 15px; font-weight: bold; color: white;"></div>
+            </form>
+        
+        </div>
     </div>
-  </div>
+
+    <script>
+        const SIGNUP_URL = 'http://127.0.0.1:5000/api/auth/signup';
+
+        function showMessage(text, isError = false) {
+            const messageArea = document.getElementById('message-area');
+            if (messageArea) {
+                messageArea.textContent = text;
+                messageArea.style.color = isError ? '#ff7f7f' : '#7fff7f'; 
+            } else {
+                console.log(`Message: ${text} (Error: ${isError})`);
+            }
+        }
+
+        async function handleSignup(event) {
+            event.preventDefault(); 
+            
+            const fname = document.getElementById('signup-first-name').value.trim();
+            const lname = document.getElementById('signup-last-name').value.trim();
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm-password').value;
+
+            const namePattern = /^[A-Za-z\u0621-\u064A\s]+$/; 
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!namePattern.test(fname) || !namePattern.test(lname)) {
+                showMessage("first name should be ", true);
+                return;
+            }
+
+            if (!emailPattern.test(email)) {
+                showMessage("please enter a right email like:user@example.com).", true);
+                return;
+            }
+
+            if (password.length < 8) {
+                showMessage("password should be 8 characters or more ", true);
+                return;
+            }
+
+            if (password !== confirm) {
+                showMessage("password and password confirmation doesnt match!!!", true);
+                return;
+            }
+            
+            showMessage("creating account...", false);
+
+            const data = {
+                first_name: fname,
+                last_name: lname,
+                username: username,
+                email: email,
+                password: password
+            };
+
+            try {
+                const response = await fetch(SIGNUP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage("account has been created succusfully, now you can login...", false);
+                    setTimeout(() => {
+                         window.location.href = 'login.html';
+                    }, 1500); 
+                } else {
+                    showMessage(`signup error...'}`, true);
+                }
+            } catch (error) {
+                console.error('API Connection Error:', error);
+                showMessage('make sure flask works on 5000.', true);
+            }
+        }
+    </script>
 </body>
 </html>
-
