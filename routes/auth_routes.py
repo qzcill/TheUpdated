@@ -37,7 +37,7 @@ def signup():
             data['password']
         ))
         
-        print(f"✅ New user created: {data['username']}")
+        print(f" New user created: {data['username']}")
         return jsonify({
             "message": "Account created successfully!",
             "username": data['username']
