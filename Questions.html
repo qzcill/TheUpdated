@@ -212,7 +212,7 @@ document.getElementById('nextBtn').addEventListener('click', function() {
 });
 
 async function submitQuiz() {
-    console.log("🚀 SUBMIT QUIZ FUNCTION CALLED");
+    console.log("SUBMIT QUIZ FUNCTION CALLED");
     
     const answers = [];
     
@@ -224,13 +224,13 @@ async function submitQuiz() {
                 question_id: i,  // MUST be 1-10
                 option_id: parseInt(selected.value)  // MUST be 1-71
             });
-            console.log(`✅ Q${i}: Selected option ${selected.value}`);
+            console.log(` Q${i}: Selected option ${selected.value}`);
         } else {
-            console.log(`❌ Q${i}: NOT ANSWERED!`);
+            console.log(` Q${i}: NOT ANSWERED!`);
         }
     }
     
-    console.log("📦 Answers array:", answers);
+    console.log(" Answers array:", answers);
     
     if (answers.length < 10) {
         alert(`You only answered ${answers.length}/10 questions! Please answer all questions.`);
@@ -238,8 +238,8 @@ async function submitQuiz() {
     }
     
     const token = localStorage.getItem('token');
-    console.log("🔑 Token exists?", !!token);
-    console.log("🔑 Token:", token ? token.substring(0, 20) + "..." : "NO TOKEN");
+    console.log(" Token exists?", !!token);
+    console.log(" Token:", token ? token.substring(0, 20) + "..." : "NO TOKEN");
     
     if (!token) {
         alert('Session expired. Please login again.');
@@ -252,7 +252,7 @@ async function submitQuiz() {
         answers: answers
     };
     
-    console.log("📤 Sending to server:", requestData);
+    console.log(" Sending to server:", requestData);
     
     try {
         // Show loading
@@ -260,7 +260,7 @@ async function submitQuiz() {
         btn.textContent = 'Submitting...';
         btn.disabled = true;
         
-        console.log("🌐 Making fetch request to: http://localhost:5000/api/quiz/submit");
+        console.log(" Making fetch request to: http://localhost:5000/api/quiz/submit");
         
         const response = await fetch('http://localhost:5000/api/quiz/submit', {
             method: 'POST',
@@ -271,16 +271,16 @@ async function submitQuiz() {
             body: JSON.stringify(requestData)
         });
         
-        console.log("📥 Response status:", response.status);
-        console.log("📥 Response headers:", response.headers);
+        console.log(" Response status:", response.status);
+        console.log(" Response headers:", response.headers);
         
         const data = await response.json();
-        console.log("📥 Server response data:", data);
+        console.log(" Server response data:", data);
         
         if (response.ok && data.success) {
-            console.log("✅ Quiz submitted successfully!");
-            console.log("🎯 Career:", data.career);
-            console.log("🗺️ Roadmap:", data.roadmap);
+            console.log(" Quiz submitted successfully!");
+            console.log(" Career:", data.career);
+            console.log(" Roadmap:", data.roadmap);
             
             // Save to localStorage
             localStorage.setItem('current_career', data.career);
@@ -290,14 +290,14 @@ async function submitQuiz() {
             // Redirect
             window.location.href = data.redirect || `Result.html?career=${data.career}`;
         } else {
-            console.error("❌ Server error:", data);
+            console.error(" Server error:", data);
             alert('Error: ' + (data.error || 'Unknown error'));
             
             btn.textContent = 'Submit Quiz';
             btn.disabled = false;
         }
     } catch (error) {
-        console.error("💥 Network error:", error);
+        console.error(" Network error:", error);
         alert('Cannot connect to server. Make sure Flask is running on port 5000!');
         
         document.getElementById('nextBtn').textContent = 'Submit Quiz';

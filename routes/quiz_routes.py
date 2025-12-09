@@ -8,7 +8,7 @@ quiz_bp = Blueprint('quiz', __name__)
 def submit_quiz():
     """ULTRA SIMPLE QUIZ SUBMISSION - WILL DEFINITELY SAVE"""
     print("="*50)
-    print("🟢 QUIZ SUBMIT ENDPOINT CALLED!")
+    print(" QUIZ SUBMIT ENDPOINT CALLED!")
     print("="*50)
     
     # Get token
@@ -16,7 +16,7 @@ def submit_quiz():
     print(f"Auth header: {auth_header}")
     
     if not auth_header or 'Bearer ' not in auth_header:
-        print("❌ No Bearer token")
+        print(" No Bearer token")
         return jsonify({"error": "No token"}), 401
     
     token = auth_header.split(' ')[1]
@@ -25,24 +25,24 @@ def submit_quiz():
         # Decode token to get user_id
         decoded = jwt.decode(token, 'techpath-secret-123', algorithms=['HS256'])
         user_id = decoded.get('user_id')
-        print(f"✅ User ID from token: {user_id}")
+        print(f" User ID from token: {user_id}")
     except:
-        print("❌ Invalid token")
+        print(" Invalid token")
         return jsonify({"error": "Invalid token"}), 401
     
     # Get data
     data = request.get_json()
-    print(f"📥 Request data: {data}")
+    print(f" Request data: {data}")
     
     if not data:
-        print("❌ No data")
+        print(" No data")
         return jsonify({"error": "No data"}), 400
     
     answers = data.get('answers', [])
-    print(f"📥 Answers count: {len(answers)}")
+    print(f" Answers count: {len(answers)}")
     
     # ========== SAVE TO UserAnswers ==========
-    print("\n💾 SAVING TO UserAnswers TABLE...")
+    print("\n SAVING TO UserAnswers TABLE...")
     
     for ans in answers:
         q_id = ans.get('question_id')
@@ -55,12 +55,12 @@ def submit_quiz():
                 VALUES (%s, %s, %s)
                 """
                 execute_query(sql, (user_id, q_id, o_id))
-                print(f"  ✓ Saved: Q{q_id} -> Option {o_id}")
+                print(f"   Saved: Q{q_id} -> Option {o_id}")
             except Exception as e:
-                print(f"  ❌ Error saving Q{q_id}: {e}")
+                print(f"   Error saving Q{q_id}: {e}")
     
     # ========== SAVE TO Recommendations ==========
-    print("\n💾 SAVING TO Recommendations TABLE...")
+    print("\n SAVING TO Recommendations TABLE...")
     
     # Always recommend WebDev for testing
     career = 'WebDev'
@@ -77,11 +77,11 @@ def submit_quiz():
         VALUES (%s, %s, %s)
         """
         execute_query(insert_sql, (user_id, career, roadmap))
-        print(f"  ✅ Saved recommendation: {career} -> {roadmap}")
+        print(f"   Saved recommendation: {career} -> {roadmap}")
     except Exception as e:
-        print(f"  ❌ Error saving recommendation: {e}")
+        print(f"   Error saving recommendation: {e}")
     
-    print("\n✅ DATABASE SAVES COMPLETED!")
+    print("\n DATABASE SAVES COMPLETED!")
     print("="*50)
     
     return jsonify({

@@ -20,14 +20,14 @@ def get_user_id():
 @roadmap_bp.route('/my-career', methods=['GET'])
 def get_my_career():
     """Get user's career recommendation - FIXED"""
-    print("\n📋 GETTING USER CAREER")
+    print("\n GETTING USER CAREER")
     
     user_id = get_user_id()
     if not user_id:
-        print("❌ No user_id from token")
+        print(" No user_id from token")
         return jsonify({"error": "Please login first"}), 401
     
-    print(f"✅ User ID: {user_id}")
+    print(f" User ID: {user_id}")
     
     try:
         # Get recommendation from database
@@ -38,11 +38,11 @@ def get_my_career():
         """
         result = execute_query(sql, (user_id,), fetch_data=True)
         
-        print(f"📊 Database query result: {result}")
+        print(f" Database query result: {result}")
         
         if result and len(result) > 0:
             career_data = result[0]
-            print(f"✅ Found career: {career_data['career_path']}")
+            print(f" Found career: {career_data['career_path']}")
             
             return jsonify({
                 "success": True,
@@ -51,7 +51,7 @@ def get_my_career():
                 "message": "Career found"
             }), 200
         else:
-            print("❌ No career found in database")
+            print(" No career found in database")
             return jsonify({
                 "success": False,
                 "error": "No quiz results found. Please take the quiz first.",
@@ -59,5 +59,5 @@ def get_my_career():
             }), 404
             
     except Exception as e:
-        print(f"❌ Error getting career: {e}")
+        print(f" Error getting career: {e}")
         return jsonify({"error": f"Server error: {str(e)}"}), 500

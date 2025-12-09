@@ -44,7 +44,7 @@ def signup():
         }), 201
         
     except Exception as e:
-        print(f"❌ Signup error: {str(e)}")
+        print(f" Signup error: {str(e)}")
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 @auth_bp.route('/login', methods=['POST'])
@@ -66,7 +66,7 @@ def login():
         
         user = users[0]
         
-        # Simple password check
+        # password check
         if user['password'] == password:
             # Create token
             token = jwt.encode({
