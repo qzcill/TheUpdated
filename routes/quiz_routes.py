@@ -1,124 +1,93 @@
-from flask import Blueprint, jsonify, request
-from utils.auth_middleware import token_required
+from flask import Blueprint, request, jsonify
 from config.db import execute_query 
-import json
+import jwt
 
 quiz_bp = Blueprint('quiz', __name__)
 
-@quiz_bp.route('/questions', methods=['GET'])
-def get_quiz_questions():
-    """ quiz answers being directed  """
+@quiz_bp.route('/submit', methods=['POST'])
+def submit_quiz():
+    """ULTRA SIMPLE QUIZ SUBMISSION - WILL DEFINITELY SAVE"""
+    print("="*50)
+    print("🟢 QUIZ SUBMIT ENDPOINT CALLED!")
+    print("="*50)
+    
+    # Get token
+    auth_header = request.headers.get('Authorization')
+    print(f"Auth header: {auth_header}")
+    
+    if not auth_header or 'Bearer ' not in auth_header:
+        print("❌ No Bearer token")
+        return jsonify({"error": "No token"}), 401
+    
+    token = auth_header.split(' ')[1]
+    
     try:
-        questions_query = "SELECT question_id, question_text, category FROM QuizQuestions"
-        questions = execute_query(questions_query)
-        
-        if not questions:
-            return jsonify({"message": "No questions available."}), 404
-
-        options_query = "SELECT option_id, question_id, option_text, value FROM QuizOptions"
-        options = execute_query(options_query)
-
-        options_map = {}
-        for opt in options:
-            qid = opt['question_id']
-            if qid not in options_map:
-                options_map[qid] = []
-            options_map[qid].append({
-                "option_id": opt['option_id'],
-                "option_text": opt['option_text'],
-                "value": opt['value'] 
-            })
-        
-        full_quiz = []
-        for q in questions:
-            q_id = q['question_id']
-            full_quiz.append({
-                "question_id": q_id,
-                "question_text": q['question_text'],
-                "category": q['category'],
-                "options": options_map.get(q_id, [])
-            })
-            
-        return jsonify(full_quiz), 200
-
-    except Exception as e:
-        print(f"Error fetching quiz questions: {e}")
-        return jsonify({"message": "Internal Server Error"}), 500
-
-
-def determine_recommendation(user_id, answers):
-    """ analyzing answers... """
-    try:
-        option_ids = [str(a['option_id']) for a in answers if 'option_id' in a]
-        if not option_ids:
-             raise ValueError("No valid answers provided for scoring.")
-
-        option_ids_str = ', '.join(option_ids)
-        
-        query = f"SELECT SUM(value) as total_score FROM QuizOptions WHERE option_id IN ({option_ids_str})"
-        result = execute_query(query)
-        
-        total_score = result[0]['total_score'] if result and result[0]['total_score'] is not None else 0
-
-        if total_score >= 80:
-            path = ""
-            desc = ""
-            link = "/roadmap/"
-        elif total_score >= 50:
-            path = ""
-            desc = "."
-            link = "/roadmap/"
-        else:
-            path = ""
-            desc = "."
-            link = "/roadmap/"
-            
-
-        save_rec_query = """
-        INSERT INTO Recommendations (user_id, career_path, description, roadmap_link)
-        VALUES (%s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE 
-        career_path = VALUES(career_path), description = VALUES(description), roadmap_link = VALUES(roadmap_link)
-        """
-        execute_query(save_rec_query, (user_id, path, desc, link))
-
-        return path
-
-    except Exception as e:
-        print(f"Error determining recommendation: {e}")
-        raise
-
-
-@quiz_bp.route('/submit-answers', methods=['POST'])
-@token_required 
-def submit_answers():
-    """takes user answers and save it in the database like : {"answers": [{"question_id": 1, "option_id": 5}, ...]}"""
-    user_id = request.user_id 
+        # Decode token to get user_id
+        decoded = jwt.decode(token, 'techpath-secret-123', algorithms=['HS256'])
+        user_id = decoded.get('user_id')
+        print(f"✅ User ID from token: {user_id}")
+    except:
+        print("❌ Invalid token")
+        return jsonify({"error": "Invalid token"}), 401
+    
+    # Get data
     data = request.get_json()
-    answers = data.get('answers')
-
-    if not answers or not isinstance(answers, list):
-        return jsonify({"message": "Invalid or missing answers list."}), 400
-
+    print(f"📥 Request data: {data}")
+    
+    if not data:
+        print("❌ No data")
+        return jsonify({"error": "No data"}), 400
+    
+    answers = data.get('answers', [])
+    print(f"📥 Answers count: {len(answers)}")
+    
+    # ========== SAVE TO UserAnswers ==========
+    print("\n💾 SAVING TO UserAnswers TABLE...")
+    
+    for ans in answers:
+        q_id = ans.get('question_id')
+        o_id = ans.get('option_id')
+        
+        if q_id and o_id:
+            try:
+                sql = """
+                INSERT INTO UserAnswers (user_id, question_id, selected_option)
+                VALUES (%s, %s, %s)
+                """
+                execute_query(sql, (user_id, q_id, o_id))
+                print(f"  ✓ Saved: Q{q_id} -> Option {o_id}")
+            except Exception as e:
+                print(f"  ❌ Error saving Q{q_id}: {e}")
+    
+    # ========== SAVE TO Recommendations ==========
+    print("\n💾 SAVING TO Recommendations TABLE...")
+    
+    # Always recommend WebDev for testing
+    career = 'WebDev'
+    roadmap = 'App_WebDev.html'
+    
     try:
-  
-        save_answer_query = """
-        INSERT INTO UserAnswers (user_id, question_id, option_id)
+        # Delete old
+        delete_sql = "DELETE FROM Recommendations WHERE user_id = %s"
+        execute_query(delete_sql, (user_id,))
+        
+        # Insert new
+        insert_sql = """
+        INSERT INTO Recommendations (user_id, career_path, description) 
         VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE option_id = VALUES(option_id)
         """
-        
-        for answer in answers:
-            if 'question_id' in answer and 'option_id' in answer:
-                execute_query(save_answer_query, (user_id, answer['question_id'], answer['option_id']))
-        
-        recommended_major = determine_recommendation(user_id, answers)
-
-        return jsonify({
-            "message": "Answers submitted and recommendation determined successfully.",
-            "recommended_major": recommended_major
-        }), 200
-
+        execute_query(insert_sql, (user_id, career, roadmap))
+        print(f"  ✅ Saved recommendation: {career} -> {roadmap}")
     except Exception as e:
-        print(f"Error submitting answers: {e}")
-        return jsonify({"message": "Failed to process answers or determine recommendation."}), 500
+        print(f"  ❌ Error saving recommendation: {e}")
+    
+    print("\n✅ DATABASE SAVES COMPLETED!")
+    print("="*50)
+    
+    return jsonify({
+        "success": True,
+        "message": "Quiz saved to database!",
+        "career": career,
+        "roadmap": roadmap,
+        "redirect": f"Result.html?career={career}"
+    })

@@ -2,15 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login to Your Account</title>
+    <title>Login </title>
     <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="log_sign.css">
+    <style>
+        .login-note {
+            color: #ffffff;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .signup-link {
+            color: #fefefe;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
     <div class="contain-logsign">
         <div id="log_sign">
-            <h2 id="logsign">Login</h2>
+            <h2 id="logsign">login</h2>
+            <p style="color: #ffffff; text-align: center; margin-bottom: 20px;">
+                Login to see your tech roadmap
+            </p>
 
             <form id="login-form" onsubmit="handleLogin(event)">
                 
@@ -18,46 +35,40 @@
                 
                 <input type="password" id="login-password" name="password" placeholder="Password" required>
 
-                <button type="submit">Log in</button>
-                
-                <p style="text-align: center; margin-top: 15px; color: #ffffff;">
-                    Don't have an account? <a href="signup.html" style="color: #ffffff; text-decoration: none;">Sign up </a>
-                </p>
+                <button type="submit">login </button>
                 
                 <div id="message-area" style="text-align: center; margin-top: 15px; font-weight: bold; color: white;"></div>
             </form>
+            
+            <div class="login-note">
+                <p>Don't have an account yet?</p>
+                <p><a href="signup.html" class="signup-link">Sign up</a></p>
+            </div>
         
         </div>
     </div>
 
     <script>
-        const LOGIN_URL = 'http://127.0.0.1:5000/api/auth/login';
+        const LOGIN_URL = 'http://localhost:5000/api/auth/login';
 
         function showMessage(text, isError = false) {
             const messageArea = document.getElementById('message-area');
             if (messageArea) {
                 messageArea.textContent = text;
-                messageArea.style.color = isError ? '#ff7f7f' : '#7fff7f'; 
-            } else {
-                console.log(`Message: ${text} (Error: ${isError})`);
+                messageArea.style.color = isError ? '#ff7f7f' : '#7fff7f';
             }
         }
 
         async function handleLogin(event) {
-            event.preventDefault(); 
+            event.preventDefault();
             
-            const usernameOrEmail = document.getElementById('login-username-email').value.trim();
+            const username = document.getElementById('login-username-email').value.trim();
             const password = document.getElementById('login-password').value;
-
-            if (!usernameOrEmail || !password) {
-                showMessage("please enter your email and password", true);
-                return;
-            }
             
-            showMessage(" login...", false);
+            showMessage("Logging in...", false);
 
             const data = {
-                username_or_email: usernameOrEmail,
+                username_or_email: username,
                 password: password
             };
 
@@ -71,20 +82,34 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    showMessage(` quiz questions...`, false);
+                    showMessage("Login successful! Loading your roadmap...", false);
                     
+                    // Save user info
+                    localStorage.setItem('token', result.token);
                     localStorage.setItem('user_id', result.user_id);
                     localStorage.setItem('username', result.username);
-
-                    setTimeout(() => {
-                      window.location.href = 'Questions.html';
-                    }, 1500); 
+                    
+                    if (result.has_quiz) {
+                        // User has taken quiz - go directly to roadmap
+                        localStorage.setItem('current_career', result.career);
+                        localStorage.setItem('current_roadmap', result.roadmap);
+                        
+                        setTimeout(() => {
+                            window.location.href = result.roadmap;
+                        }, 1000);
+                    } else {
+                        // User hasn't taken quiz - they MUST sign up first
+                        showMessage("You haven't taken the quiz yet. Please sign up first!", true);
+                        setTimeout(() => {
+                            window.location.href = 'signup.html';
+                        }, 2000);
+                    }
                 } else {
-                    showMessage(`faild to login`, true);
+                    showMessage(`Login failed: ${result.error}`, true);
                 }
             } catch (error) {
-                console.error('API Connection Error...', error);
-                showMessage('error in flask! make sure to work on 5000 !!', true);
+                console.error('API Connection Error:', error);
+                showMessage('Server error. Make sure Flask is running on port 5000!', true);
             }
         }
     </script>

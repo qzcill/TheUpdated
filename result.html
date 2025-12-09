@@ -1,72 +1,144 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Career Result</title>
+  <title>Your Tech Path Result</title>
+  <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="SoftwareEng.css">
+  <style>
+    .result-container {
+      text-align: center;
+      padding: 50px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .result-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      margin: 30px 0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .roadmap-btn {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: transform 0.3s;
+    }
+    .roadmap-btn:hover {
+      transform: scale(1.05);
+    }
+    .logout-btn {
+      background: #ff4444;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="title"> Your Ideal Career Path </h1>
+  <div class="result-container">
+    <h1 class="title">🎯 Your Tech Path Result</h1>
+    
     <div class="result-box">
-      <h2 id="careerName">Loading...</h2>
+      <h2 id="careerName">Analyzing your answers...</h2>
       <p id="careerDesc"></p>
-
-      <button id="nextBtn" class="roadmap">View Roadmap 🚀</button>
-
-
+      
+      <button id="viewRoadmap" class="roadmap-btn">🚀 View Your Personalized Roadmap</button>
     </div>
+    
+    <button onclick="logout()" class="logout-btn">Logout</button>
+    
+    <p>Your result has been saved. When you login again, you'll go directly to your roadmap!</p>
   </div>
 
   <script>
-    // هنا نحاكي النتيجة مؤقتاً (لاحقاً تجي من الذكاء الاصطناعي)
-    const userResult = "WebDev"; 
-    const careers = {
-      "AI": {
-        name: "Artificial Intelligence",
-        desc: "You're logical and love automation! 🤖",
-        link: "AI.html"
+    // Career mapping
+    const careerMap = {
+      'AI': {
+        name: 'AI / Machine Learning Engineer',
+        desc: 'Your logical thinking and algorithm skills are perfect for AI! 🤖',
+        file: 'AI.html',
+        icon: '🤖'
       },
-      "WebDev": {
-        name: "Web Development",
-        desc: "You enjoy creating interactive websites 💻",
-        link: "App_WebDev.html"
+      'WebDev': {
+        name: 'Web & App Developer',
+        desc: 'You love building practical solutions! 💻',
+        file: 'App_WebDev.html',
+        icon: '💻'
       },
-      "Cyber": {
-        name: "Cyber Security",
-        desc: "You’re sharp and like protecting systems 🔐",
-        link: "Cyber.html"
+      'UIUX': {
+        name: 'UI/UX Designer',
+        desc: 'You have an eye for beautiful interfaces! 🎨',
+        file: 'UI_UX.html',
+        icon: '🎨'
       },
-      "Data": {
-        name: "Data Science",
-        desc: "You love finding patterns and insights 📊",
-        link: "Data_Science_Analytics.html"
+      'Cyber': {
+        name: 'Cybersecurity Specialist',
+        desc: 'You think like a security expert! 🛡️',
+        file: 'Cyber.html',
+        icon: '🛡️'
       },
-      "GameDev": {
-        name: "Game Development",
-        desc: "You’re creative and love building experiences 🎮",
-        link: "GameDev.html"
+      'DataScience': {
+        name: 'Data Scientist',
+        desc: 'You love finding patterns in data! 📊',
+        file: 'DataScience_Analytics.html',
+        icon: '📊'
       },
-      "Cloud": {
-        name: "Cloud Computing & DevOps",
-        desc: "You like automation and scalability ☁️",
-        link: "CloudComputing_DevOps.html"
+      'GameDev': {
+        name: 'Game Developer',
+        desc: 'You are creative and love interactive experiences! 🎮',
+        file: 'GameDev.html',
+        icon: '🎮'
+      },
+      'Cloud': {
+        name: 'Cloud & DevOps Engineer',
+        desc: 'You enjoy automation and scalability! ☁️',
+        file: 'CloudComputing_DevOps.html',
+        icon: '☁️'
       }
     };
 
-    const chosen = careers[userResult];
-    if (chosen) {
-      document.getElementById("careerName").textContent = chosen.name;
-      document.getElementById("careerDesc").textContent = chosen.desc;
-      document.getElementById("nextBtn").onclick = () => {
-        window.location.href = chosen.link;
-      };
-    } else {
-      document.getElementById("careerName").textContent = "No Result Found";
-      document.getElementById("careerDesc").textContent = "Please complete the quiz.";
+    // Get career from URL
+// In Result.html, update the loadResult function:
+function loadResult() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const career = urlParams.get('career') || localStorage.getItem('current_career') || 'WebDev';
+    
+    const info = careerMap[career] || careerMap['WebDev'];
+    
+    // Display result briefly
+    document.getElementById('careerName').textContent = `${info.icon} ${info.name}`;
+    document.getElementById('careerDesc').textContent = info.desc;
+    
+    // Save to localStorage
+    localStorage.setItem('current_career', career);
+    localStorage.setItem('current_roadmap', info.file);
+    localStorage.setItem('has_quiz', 'true');
+    
+    // AUTO-REDIRECT to roadmap after 2 seconds
+    setTimeout(() => {
+        window.location.href = info.file;
+    }, 2000);
+}
+    
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
     }
+    
+    // Load result when page loads
+    document.addEventListener('DOMContentLoaded', loadResult);
   </script>
 </body>
 </html>

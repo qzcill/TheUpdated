@@ -1,57 +1,63 @@
-from flask import Blueprint, jsonify, request
-from utils.auth_middleware import token_required
+from flask import Blueprint, request, jsonify
 from config.db import execute_query 
-import json
+import jwt
 
 roadmap_bp = Blueprint('roadmap', __name__)
 
-
-@roadmap_bp.route('/suggested-major', methods=['GET'])
-@token_required 
-def get_suggested_major():
-    user_id = request.user_id
-
+def get_user_id():
+    """Get user_id from JWT token"""
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return None
+    
+    token = auth_header.split(' ')[1]
     try:
-        query = "SELECT career_path, description, roadmap_link FROM Recommendations WHERE user_id = %s"
-        result = execute_query(query, (user_id,))
+        decoded = jwt.decode(token, 'techpath-secret-123', algorithms=['HS256'])
+        return decoded.get('user_id')
+    except:
+        return None
+
+@roadmap_bp.route('/my-career', methods=['GET'])
+def get_my_career():
+    """Get user's career recommendation - FIXED"""
+    print("\n📋 GETTING USER CAREER")
+    
+    user_id = get_user_id()
+    if not user_id:
+        print("❌ No user_id from token")
+        return jsonify({"error": "Please login first"}), 401
+    
+    print(f"✅ User ID: {user_id}")
+    
+    try:
+        # Get recommendation from database
+        sql = """
+        SELECT career_path, roadmap_link 
+        FROM Recommendations 
+        WHERE user_id = %s
+        """
+        result = execute_query(sql, (user_id,), fetch_data=True)
         
-        if result:
-            recommendation = result[0]
+        print(f"📊 Database query result: {result}")
+        
+        if result and len(result) > 0:
+            career_data = result[0]
+            print(f"✅ Found career: {career_data['career_path']}")
+            
             return jsonify({
-                "career_path": recommendation['career_path'],
-                "description": recommendation['description'],
-                "roadmap_link": recommendation['roadmap_link']
+                "success": True,
+                "career": career_data['career_path'],
+                "roadmap": career_data['roadmap_link'],
+                "message": "Career found"
             }), 200
         else:
-            return jsonify({"message": "No recommendation found for this user. Please complete the quiz."}), 404
-
+            print("❌ No career found in database")
+            return jsonify({
+                "success": False,
+                "error": "No quiz results found. Please take the quiz first.",
+                "has_quiz": False
+            }), 404
+            
     except Exception as e:
-        print(f"Error fetching suggested major: {e}")
-        return jsonify({"message": "Internal Server Error"}), 500
-
-
-@roadmap_bp.route('/<string:major>', methods=['GET'])
-@token_required
-def get_roadmap_details(major):
-    mock_data = {
-        "": [
-            {"stage": 1, "title": " ()", "topics": ["", ""]},
-            {"stage": 2, "title": " ()", "topics": ["", ""]},
-        ],
-        "": [
-            {"stage": 1, "title": " ()", "topics": ["", ""]},
-            {"stage": 2, "title": " ()", "topics": ["", ""]},
-        ],
-        "": [
-            {"stage": 1, "title": "()", "topics": ["", ""]},
-            {"stage": 2, "title": "()", "topics": ["", ""]},
-        ]
-    }
-
-    if major in mock_data:
-        return jsonify({
-            "major": major,
-            "roadmap_details": mock_data[major]
-        }), 200
-    else:
-        return jsonify({"message": f"Roadmap for major '{major}' not found."}), 404
+        print(f"❌ Error getting career: {e}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500

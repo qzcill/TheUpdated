@@ -191,5 +191,29 @@ footer {
 
 <footer>© 2025 Your Game Development Journey</footer>
 
+<!-- Add this at the VERY END, right before </body> -->
+<div style="text-align: center; margin: 40px 0; padding: 20px;">
+    <button onclick="logout()" style="
+        padding: 12px 24px;
+        margin: 10px;
+        background: #4f5b6f;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: 0.3s;
+    ">🚪 Logout</button>
+</div>
+
+<script>
+    function logout() {
+        // Clear all user data
+        localStorage.clear();
+        // Redirect to login page
+        window.location.href = 'login.html';
+    }
+</script>
 </body>
 </html>

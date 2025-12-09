@@ -23,6 +23,10 @@
 
                 <button type="submit">Sign up</button>
                 
+                <p style="text-align: center; margin-top: 15px; color: #ffffff;">
+                    Already have an account? <a href="login.html" style="color: #ffffff; text-decoration: none;">Login to view your roadmap</a>
+                </p>
+                
                 <div id="message-area" style="text-align: center; margin-top: 15px; font-weight: bold; color: white;"></div>
             </form>
         
@@ -30,20 +34,19 @@
     </div>
 
     <script>
-        const SIGNUP_URL = 'http://127.0.0.1:5000/api/auth/signup';
+        const SIGNUP_URL = 'http://localhost:5000/api/auth/signup';
+        const LOGIN_URL = 'http://localhost:5000/api/auth/login';
 
         function showMessage(text, isError = false) {
             const messageArea = document.getElementById('message-area');
             if (messageArea) {
                 messageArea.textContent = text;
-                messageArea.style.color = isError ? '#ff7f7f' : '#7fff7f'; 
-            } else {
-                console.log(`Message: ${text} (Error: ${isError})`);
+                messageArea.style.color = isError ? '#ff7f7f' : '#7fff7f';
             }
         }
 
         async function handleSignup(event) {
-            event.preventDefault(); 
+            event.preventDefault();
             
             const fname = document.getElementById('signup-first-name').value.trim();
             const lname = document.getElementById('signup-last-name').value.trim();
@@ -52,30 +55,30 @@
             const password = document.getElementById('signup-password').value;
             const confirm = document.getElementById('signup-confirm-password').value;
 
-            const namePattern = /^[A-Za-z\u0621-\u064A\s]+$/; 
+            const namePattern = /^[A-Za-z\u0621-\u064A\s]+$/;
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!namePattern.test(fname) || !namePattern.test(lname)) {
-                showMessage("first name should be ", true);
+                showMessage("First and last name should contain only letters", true);
                 return;
             }
 
             if (!emailPattern.test(email)) {
-                showMessage("please enter a right email like:user@example.com).", true);
+                showMessage("Please enter a valid email (e.g., user@example.com)", true);
                 return;
             }
 
             if (password.length < 8) {
-                showMessage("password should be 8 characters or more ", true);
+                showMessage("Password should be 8 characters or more", true);
                 return;
             }
 
             if (password !== confirm) {
-                showMessage("password and password confirmation doesnt match!!!", true);
+                showMessage("Password and confirmation don't match!", true);
                 return;
             }
             
-            showMessage("creating account...", false);
+            showMessage("Creating account...", false);
 
             const data = {
                 first_name: fname,
@@ -86,6 +89,7 @@
             };
 
             try {
+                // 1. Sign up
                 const response = await fetch(SIGNUP_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -95,16 +99,41 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    showMessage("account has been created succusfully, now you can login...", false);
-                    setTimeout(() => {
-                         window.location.href = 'login.html';
-                    }, 1500); 
+                    showMessage("Account created! Logging you in...", false);
+                    
+                    // 2. Auto-login immediately
+                    const loginResponse = await fetch(LOGIN_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username_or_email: username,
+                            password: password
+                        })
+                    });
+                    
+                    const loginData = await loginResponse.json();
+                    
+                    if (loginResponse.ok) {
+                        // Save user data
+                        localStorage.setItem('token', loginData.token);
+                        localStorage.setItem('user_id', loginData.user_id);
+                        localStorage.setItem('username', loginData.username);
+                        localStorage.setItem('has_quiz', loginData.has_quiz || false);
+                        
+                        // 3. ALWAYS go to questions after signup
+                        showMessage("Redirecting to quiz...", false);
+                        setTimeout(() => {
+                            window.location.href = 'Questions.html';
+                        }, 1500);
+                    } else {
+                        showMessage("Account created but login failed: " + (loginData.error || 'Unknown error'), true);
+                    }
                 } else {
-                    showMessage(`signup error...'}`, true);
+                    showMessage("Signup failed: " + (result.error || 'Unknown error'), true);
                 }
             } catch (error) {
-                console.error('API Connection Error:', error);
-                showMessage('make sure flask works on 5000.', true);
+                console.error('Signup error:', error);
+                showMessage('Server error. Make sure Flask is running on port 5000!', true);
             }
         }
     </script>
