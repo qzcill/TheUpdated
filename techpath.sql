@@ -1,4 +1,4 @@
- USE techpath;
+ USE teachpath;
 
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --

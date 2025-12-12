@@ -1,0 +1,12 @@
+{
+    "model_type": "Random Forest",
+    "train_accuracy": 0.9770114942528736,
+    "test_accuracy": 0.9545454545454546,
+    "overfitting_gap": 0.022466039707419005,
+    "cv_mean": 0.9091503267973857,
+    "cv_std": 0.04297851561509435,
+    "n_estimators": 100,
+    "max_depth": 10,
+    "min_samples_split": 10,
+    "min_samples_leaf": 5
+}

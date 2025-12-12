@@ -16,7 +16,8 @@ background-attachment: fixed;  background-size: cover;
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-
+font-family: "Bebas Neue", sans-serif;
+ ;
   padding: 40px 30px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(255, 255, 255, 0.292);
@@ -26,11 +27,12 @@ background-attachment: fixed;  background-size: cover;
 
 /* العنوان */
 #logsign {
-  font-family: "Momo Trust Display", sans-serif;
-  font-size: 32px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 50px;
   color: #ffffff;
   margin-bottom: 50px;
   letter-spacing: 7px;
+  letter-spacing: 12px;
 }
 
 input {
@@ -72,7 +74,7 @@ button:hover {
 .signup {
 color: #eee;
 display: inline;
-font-family: "Momo Trust Display", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
 word-spacing: 5px;
 }
 

@@ -4,7 +4,8 @@
  --muted: #9aa0a691;
   --accent: #ffffffe4;
    --spark-size: 28px;
-  --font: "Momo Trust Display", sans-serif;
+  --font: "Bebas Neue", sans-serif;
+
 }
 
 
@@ -32,8 +33,8 @@ background-size:cover ;
   background-image: url("mesh-gradient (7).png"); 
 }
 .title {
-  font-size: clamp(2rem, 8vw, 8rem);
-  font-weight: 900;
+  font-size: clamp(5rem, 8vw, 8rem);
+  font-weight: 1000;
   letter-spacing: 0.05em;
   line-height: 1.5;
   margin: 0;
@@ -155,19 +156,23 @@ html[data-sparkles="off"] .spark-canvas {
 a {
   color: white;
   text-decoration: none;
-  font-size: clamp(1rem, 3vw, 2rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 400;
   letter-spacing: 0.02em;
   line-height: 0.9;
   margin: 0;
   position: relative;
-  display: inline-block;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Bebas Neue", sans-serif;
+   
+
   font-weight: 800;
   color: #fff;
   text-shadow: 0 0 2px rgb(255, 255, 255);
   letter-spacing: 3px;
+  transition: all 0.2s ease;
+    display: block;
+
 }
 
 a:hover {
@@ -195,6 +200,7 @@ a:hover {
   margin: 0;
   position: relative;
   display: inline-block;
+  font-size: 50px;
   cursor: pointer;
   font-family: inherit;
   color: #ffffff;
@@ -209,6 +215,7 @@ a:hover {
   padding-inline: 0.05em;
   transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transform-origin: center bottom;
+
 }
 
 .title:hover .ch2 {
@@ -218,6 +225,8 @@ a:hover {
 
 .title2 {
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), 0 0 22px rgba(0, 0, 0, 0.334);
+    font-family: "Bebas Neue", sans-serif;
+
 }
 
 
@@ -238,6 +247,7 @@ a:hover {
   box-shadow: 0 9px 10px rgba(0, 0, 0, 0.414);
   font-family: inherit;
   height: auto;
+
   background-color: #ffffff14;
 }
 
@@ -249,8 +259,9 @@ a:hover {
   opacity: 0;
   pointer-events: none; 
   transition: opacity 0.3s ease;
+  font-family: "Bebas Neue", sans-serif;
 
-    font-size: 22px;
+    font-size: 35px;
   line-height: 2.5; 
   margin-bottom: 20px; 
 
@@ -284,19 +295,15 @@ a:hover {
 
 .options {
   margin-top: 10px;
+    font-family: "Bebas Neue", sans-serif;
 }
 
-.options label {
-  display: block;
-  margin: 10px 0;
-  cursor: pointer;
-  
-  font-size: 20px;
-}
+
 .options label {
   display: block; 
   margin: 10px 0; 
   line-height: 1.8; 
+  font-size: 25px;
 }
 
 @media (max-width: 600px) {
@@ -306,8 +313,9 @@ a:hover {
   }
 
   .question {
-    font-size: 19px;  
-    line-height: 6;
+    font-size: 30px;
+    line-height: 2px;
+      font-family: "Bebas Neue", sans-serif;
   }
 
   #nextBtn {
@@ -316,8 +324,10 @@ a:hover {
   }
 
   .options label {
-    font-size: 17px;
-    line-height: 5;
+    font-size: 30px;
+    line-height: 70px;
+      font-family: "Bebas Neue", sans-serif;
+      
   }
 
   .wrap2 {
