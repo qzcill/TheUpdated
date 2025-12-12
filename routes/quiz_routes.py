@@ -62,9 +62,30 @@ def submit_quiz():
     # ========== SAVE TO Recommendations ==========
     print("\n SAVING TO Recommendations TABLE...")
     
-    # Always recommend WebDev for testing
-    career = 'WebDev'
-    roadmap = 'App_WebDev.html'
+    # SIMPLE FIX: Recommend based on first answer
+    if answers and len(answers) > 0:
+        first_ans = answers[0].get('option_id', 1)
+        # Map first answer (1-71) to career (1-7 range)
+        career_num = ((first_ans - 1) % 7) + 1
+        
+        career_map = {
+            1: 'AI_ML',
+            2: 'WebDev',
+            3: 'UI_UX',
+            4: 'Cyber',
+            5: 'DataScience',
+            6: 'GameDev',
+            7: 'Cloud_DevOps'
+        }
+        
+        career = career_map.get(career_num, 'WebDev')
+    else:
+        career = 'WebDev'
+    
+    # Use Intro.html as fallback for all
+    roadmap = 'Intro.html'
+    
+    print(f"   Recommended career: {career} (based on first answer)")
     
     try:
         # Delete old
