@@ -62,62 +62,77 @@
     <p>Your result has been saved. When you login again, you'll go directly to your roadmap!</p>
   </div>
 
-  <script>
-    // Career mapping
-    const careerMap = {
-      'AI': {
-        name: 'AI / Machine Learning Engineer',
-        desc: 'Your logical thinking and algorithm skills are perfect for AI! 🤖',
-        file: 'AI.html',
-        icon: '🤖'
-      },
-      'WebDev': {
-        name: 'Web & App Developer',
-        desc: 'You love building practical solutions! 💻',
-        file: 'App_WebDev.html',
-        icon: '💻'
-      },
-      'UIUX': {
-        name: 'UI/UX Designer',
-        desc: 'You have an eye for beautiful interfaces! 🎨',
-        file: 'UI_UX.html',
-        icon: '🎨'
-      },
-      'Cyber': {
-        name: 'Cybersecurity Specialist',
-        desc: 'You think like a security expert! 🛡️',
-        file: 'Cyber.html',
-        icon: '🛡️'
-      },
-      'DataScience': {
-        name: 'Data Scientist',
-        desc: 'You love finding patterns in data! 📊',
-        file: 'DataScience_Analytics.html',
-        icon: '📊'
-      },
-      'GameDev': {
-        name: 'Game Developer',
-        desc: 'You are creative and love interactive experiences! 🎮',
-        file: 'GameDev.html',
-        icon: '🎮'
-      },
-      'Cloud': {
-        name: 'Cloud & DevOps Engineer',
-        desc: 'You enjoy automation and scalability! ☁️',
-        file: 'CloudComputing_DevOps.html',
-        icon: '☁️'
-      }
-    };
+<script>
+  // UPDATED Career mapping to match backend AND fix file names
+  const careerMap = {
+    'AI_ML': {  // Changed to match backend
+      name: 'AI / Machine Learning Engineer',
+      desc: 'Your logical thinking and algorithm skills are perfect for AI! 🤖',
+      file: 'AI.html',
+      icon: '🤖'
+    },
+    'WebDev': {
+      name: 'Web & App Developer',
+      desc: 'You love building practical solutions! 💻',
+      file: 'App_WebDev.html',
+      icon: '💻'
+    },
+    'UI_UX': {  // Changed to match backend
+      name: 'UI/UX Designer',
+      desc: 'You have an eye for beautiful interfaces! 🎨',
+      file: 'UI_UX.html',
+      icon: '🎨'
+    },
+    'Cyber': {
+      name: 'Cybersecurity Specialist',
+      desc: 'You think like a security expert! 🛡️',
+      file: 'Cyber.html',
+      icon: '🛡️'
+    },
+    'DataScience': {
+      name: 'Data Scientist',
+      desc: 'You love finding patterns in data! 📊',
+      file: 'Intro.html',  // CHANGED to existing file
+      icon: '📊'
+    },
+    'GameDev': {
+      name: 'Game Developer',
+      desc: 'You are creative and love interactive experiences! 🎮',
+      file: 'GameDev.html',
+      icon: '🎮'
+    },
+    'Cloud_DevOps': {  // Changed to match backend
+      name: 'Cloud & DevOps Engineer',
+      desc: 'You enjoy automation and scalability! ☁️',
+      file: 'CloudComputing_DevOps.html',
+      icon: '☁️'
+    }
+  };
 
-    // Get career from URL
-// In Result.html, update the loadResult function:
-function loadResult() {
+  function loadResult() {
     const urlParams = new URLSearchParams(window.location.search);
-    const career = urlParams.get('career') || localStorage.getItem('current_career') || 'WebDev';
+    let career = urlParams.get('career') || localStorage.getItem('current_career') || 'WebDev';
+    
+    console.log("Career received:", career); // DEBUG
+    
+    // Convert old career names to new format
+    const nameConverter = {
+      'AI': 'AI_ML',
+      'UIUX': 'UI_UX',
+      'Cloud': 'Cloud_DevOps'
+    };
+    
+    if (nameConverter[career]) {
+      console.log("Converting:", career, "→", nameConverter[career]);
+      career = nameConverter[career];
+    }
     
     const info = careerMap[career] || careerMap['WebDev'];
     
-    // Display result briefly
+    console.log("Displaying career:", info.name);
+    console.log("Roadmap file:", info.file);
+    
+    // Display result
     document.getElementById('careerName').textContent = `${info.icon} ${info.name}`;
     document.getElementById('careerDesc').textContent = info.desc;
     
@@ -125,15 +140,21 @@ function loadResult() {
     localStorage.setItem('current_career', career);
     localStorage.setItem('current_roadmap', info.file);
     localStorage.setItem('has_quiz', 'true');
-}
     
-    function logout() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
-    
-    // Load result when page loads
-    document.addEventListener('DOMContentLoaded', loadResult);
-  </script>
+    // ========== CRITICAL: Add button click handler ==========
+    document.getElementById('viewRoadmap').addEventListener('click', function() {
+      console.log("Button clicked! Going to:", info.file);
+      window.location.href = info.file;
+    });
+  }
+  
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+  
+  // Load result when page loads
+  document.addEventListener('DOMContentLoaded', loadResult);
+</script>
 </body>
 </html>
