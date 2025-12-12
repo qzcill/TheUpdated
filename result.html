@@ -125,11 +125,6 @@ function loadResult() {
     localStorage.setItem('current_career', career);
     localStorage.setItem('current_roadmap', info.file);
     localStorage.setItem('has_quiz', 'true');
-    
-    // AUTO-REDIRECT to roadmap after 2 seconds
-    setTimeout(() => {
-        window.location.href = info.file;
-    }, 2000);
 }
     
     function logout() {
