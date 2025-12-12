@@ -84,29 +84,32 @@
 
                 const result = await response.json();
 
-                if (response.ok) {
-                    showMessage("Login successful! Loading your roadmap...", false);
-                    
-                    // Save user info
-                    localStorage.setItem('token', result.token);
-                    localStorage.setItem('user_id', result.user_id);
-                    localStorage.setItem('username', result.username);
-                    
-                    if (result.has_quiz) {
-                        // User has taken quiz - go directly to roadmap
-                        localStorage.setItem('current_career', result.career);
-                        localStorage.setItem('current_roadmap', result.roadmap);
-                        
-                        setTimeout(() => {
-                            window.location.href = result.roadmap;
-                        }, 1000);
-                    } else {
-                        // User hasn't taken quiz - they MUST sign up first
-                        showMessage("You haven't taken the quiz yet. Please sign up first!", true);
-                        setTimeout(() => {
-                            window.location.href = 'signup.html';
-                        }, 2000);
-                    }
+if (response.ok) {
+    showMessage("Login successful! Loading your results...", false);
+    
+    // Save user info
+    localStorage.setItem('token', result.token);
+    localStorage.setItem('user_id', result.user_id);
+    localStorage.setItem('username', result.username);
+    
+    if (result.has_quiz) {
+        // User has taken quiz - go to RESULT page first
+        localStorage.setItem('current_career', result.career);
+        localStorage.setItem('current_roadmap', result.roadmap);
+        localStorage.setItem('has_quiz', 'true');
+        
+        setTimeout(() => {
+            // Go to Result page to show career again
+            window.location.href = `Result.html?career=${result.career || 'WebDev'}`;
+        }, 1000);
+    } else {
+        // User hasn't taken quiz - they MUST sign up first
+        showMessage("You haven't taken the quiz yet. Please sign up first!", true);
+        setTimeout(() => {
+            window.location.href = 'signup.html';
+        }, 2000);
+    }
+
                 } else {
                     showMessage(`Login failed: ${result.error}`, true);
                 }
