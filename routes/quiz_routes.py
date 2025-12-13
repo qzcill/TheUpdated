@@ -82,10 +82,22 @@ def submit_quiz():
     else:
         career = 'WebDev'
     
-    # Use Intro.html as fallback for all
-    roadmap = 'Intro.html'
+    # ========== FIX: Use correct roadmap mapping ==========
+    roadmap_map = {
+        'AI_ML': 'AI.html',
+        'WebDev': 'App_WebDev.html',
+        'UI_UX': 'UI_UX.html',
+        'Cyber': 'Cyber.html',
+        'DataScience': 'Data_Science_Analytics.html',
+        'GameDev': 'GameDev.html',
+        'Cloud_DevOps': 'CloudComputing_DevOps.html'
+    }
+    
+    # Get the correct roadmap file
+    roadmap = roadmap_map.get(career, 'Intro.html')
     
     print(f"   Recommended career: {career} (based on first answer)")
+    print(f"   Roadmap file: {roadmap}")
     
     try:
         # Delete old
