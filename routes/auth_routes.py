@@ -23,7 +23,7 @@ def signup():
         if existing:
             return jsonify({"error": "Username or email already exists"}), 409
         
-        # Insert user (plain password as requested)
+        # Insert user 
         insert_sql = """
         INSERT INTO Users (first_name, last_name, username, email, password) 
         VALUES (%s, %s, %s, %s, %s)

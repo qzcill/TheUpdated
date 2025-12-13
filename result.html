@@ -63,9 +63,9 @@
   </div>
 
 <script>
-  // UPDATED Career mapping to match backend AND fix file names
+  
   const careerMap = {
-    'AI_ML': {  // Changed to match backend
+    'AI_ML': {  
       name: 'AI / Machine Learning Engineer',
       desc: 'Your logical thinking and algorithm skills are perfect for AI! 🤖',
       file: 'AI.html',
@@ -77,7 +77,7 @@
       file: 'App_WebDev.html',
       icon: '💻'
     },
-    'UI_UX': {  // Changed to match backend
+    'UI_UX': {  
       name: 'UI/UX Designer',
       desc: 'You have an eye for beautiful interfaces! 🎨',
       file: 'UI_UX.html',
@@ -92,7 +92,7 @@
     'DataScience': {
       name: 'Data Scientist',
       desc: 'You love finding patterns in data! 📊',
-      file: 'Intro.html',  // CHANGED to existing file
+      file: 'Data_Science_Analytics.html',  
       icon: '📊'
     },
     'GameDev': {
@@ -101,7 +101,7 @@
       file: 'GameDev.html',
       icon: '🎮'
     },
-    'Cloud_DevOps': {  // Changed to match backend
+    'Cloud_DevOps': {  
       name: 'Cloud & DevOps Engineer',
       desc: 'You enjoy automation and scalability! ☁️',
       file: 'CloudComputing_DevOps.html',
@@ -113,9 +113,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     let career = urlParams.get('career') || localStorage.getItem('current_career') || 'WebDev';
     
-    console.log("Career received:", career); // DEBUG
+    console.log("Career received:", career); 
     
-    // Convert old career names to new format
+    
     const nameConverter = {
       'AI': 'AI_ML',
       'UIUX': 'UI_UX',
@@ -141,7 +141,7 @@
     localStorage.setItem('current_roadmap', info.file);
     localStorage.setItem('has_quiz', 'true');
     
-    // ========== CRITICAL: Add button click handler ==========
+    
     document.getElementById('viewRoadmap').addEventListener('click', function() {
       console.log("Button clicked! Going to:", info.file);
       window.location.href = info.file;

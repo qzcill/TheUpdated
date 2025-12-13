@@ -41,7 +41,7 @@ def submit_quiz():
     answers = data.get('answers', [])
     print(f" Answers count: {len(answers)}")
     
-    # ========== SAVE TO UserAnswers ==========
+    # SAVE TO UserAnswers 
     print("\n SAVING TO UserAnswers TABLE...")
     
     for ans in answers:
@@ -59,13 +59,13 @@ def submit_quiz():
             except Exception as e:
                 print(f"   Error saving Q{q_id}: {e}")
     
-    # ========== SAVE TO Recommendations ==========
+    # SAVE TO Recommendations 
     print("\n SAVING TO Recommendations TABLE...")
     
-    # SIMPLE FIX: Recommend based on first answer
+    #  Recommend based on first answer
     if answers and len(answers) > 0:
         first_ans = answers[0].get('option_id', 1)
-        # Map first answer (1-71) to career (1-7 range)
+        # first answer (1-71) career (1-7 range)
         career_num = ((first_ans - 1) % 7) + 1
         
         career_map = {
@@ -82,7 +82,7 @@ def submit_quiz():
     else:
         career = 'WebDev'
     
-    # ========== FIX: Use correct roadmap mapping ==========
+    #  roadmap mapping 
     roadmap_map = {
         'AI_ML': 'AI.html',
         'WebDev': 'App_WebDev.html',
@@ -93,7 +93,7 @@ def submit_quiz():
         'Cloud_DevOps': 'CloudComputing_DevOps.html'
     }
     
-    # Get the correct roadmap file
+    # roadmap file
     roadmap = roadmap_map.get(career, 'Intro.html')
     
     print(f"   Recommended career: {career} (based on first answer)")

@@ -2,9 +2,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+CORS(app)  
 
-# Import blueprints
 from routes.auth_routes import auth_bp
 from routes.quiz_routes import quiz_bp
 from routes.roadmap_routes import roadmap_bp
